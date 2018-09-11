@@ -142,7 +142,7 @@ resource "openstack_compute_instance_v2" "ose-master" {
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
   metadata {
-    ssh_user = "${var.ssh_user}"
+    ansible_user = "${var.ansible_user}"
   }
 
   network {
@@ -163,7 +163,7 @@ resource "openstack_compute_instance_v2" "ose-node" {
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
   metadata {
-    ssh_user = "${var.ssh_user}"
+    ansible_user = "${var.ansible_user}"
   }
   network {
     name = "${var.network_name}"
