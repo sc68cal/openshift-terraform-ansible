@@ -151,8 +151,10 @@ resource "openstack_compute_instance_v2" "ose-node" {
   metadata {
     ssh_user = "${var.ssh_user}"
   }
-  volume {
-    volume_id = "${element(openstack_blockstorage_volume_v1.node-docker-vol.*.id, count.index)}"
+}
 
-  }
+resource "openstack_compute_volume_attach_v2" "ose-node-attach" {
+  count = "${var.num_nodes}"
+  instance_id = "${element(openstack_compute_instance_v2.ose-node.*.id, count.index)}"
+  volume_id = "${element(openstack_blockstorage_volume_v1.node-docker-vol.*.id, count.index)}"
 }
