@@ -5,6 +5,7 @@ variable "master_image_id" {}
 variable "master_instance_size" {}
 variable "node_image_id" {}
 variable "node_instance_size" {}
+variable "floatingip_pool_name" { default = "os1_public" }
 
 
 resource "openstack_compute_secgroup_v2" "os3-sec-group" {
@@ -92,12 +93,12 @@ resource "openstack_compute_secgroup_v2" "os3-sec-group" {
 }
 
 resource "openstack_compute_floatingip_v2" "os3-master-floatip" {
-  pool = "os1_public"
+  pool = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_floatingip_v2" "os3-node-floatip" {
   count = "${var.num_nodes}"
-  pool = "os1_public"
+  pool = "${var.floatingip_pool_name}"
 }
 
 
