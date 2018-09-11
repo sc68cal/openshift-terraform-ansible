@@ -1,5 +1,4 @@
 variable "openstack_auth_url" {}
-variable "openstack_availability_zone" {}
 variable "openstack_keypair" {}
 variable "num_nodes" { default = "2"}
 variable "master_image_id" {}
@@ -117,7 +116,6 @@ resource "openstack_compute_instance_v2" "ose-master" {
   name = "os3-master"
   image_id = "${var.master_image_id}"
   flavor_name = "${var.master_instance_size}"
-  availability_zone = "${var.openstack_availability_zone}"
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
   floating_ip = "${openstack_compute_floatingip_v2.os3-master-floatip.address}"
@@ -134,7 +132,6 @@ resource "openstack_compute_instance_v2" "ose-node" {
   name = "${concat("os3-node", count.index)}"
   image_id = "${var.node_image_id}"
   flavor_name = "${var.node_instance_size}"
-  availability_zone = "${var.openstack_availability_zone}"
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
   floating_ip = "${element(openstack_compute_floatingip_v2.os3-node-floatip.*.address, count.index)}"
