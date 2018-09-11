@@ -93,15 +93,26 @@ resource "openstack_compute_secgroup_v2" "os3-sec-group" {
   }
 }
 
-resource "openstack_compute_floatingip_v2" "os3-master-floatip" {
+resource "openstack_networking_floatingip_v2" "os3-master-floatip" {
   pool = "${var.floatingip_pool_name}"
 }
 
-resource "openstack_compute_floatingip_v2" "os3-node-floatip" {
+resource "openstack_networking_floatingip_v2" "os3-node-floatip" {
   count = "${var.num_nodes}"
   pool = "${var.floatingip_pool_name}"
 }
 
+resource "openstack_compute_floatingip_associate_v2" "master_fip_associate" {
+  floating_ip = "${openstack_networking_floatingip_v2.os3-master-floatip.address}"
+  instance_id = "${openstack_compute_instance_v2.ose-master.id}"
+}
+
+
+resource "openstack_compute_floatingip_associate_v2" "node_fip_associate" {
+  count = "${var.num_nodes}"
+  floating_ip = "${element(openstack_networking_floatingip_v2.os3-node-floatip.*.address, count.index)}"
+  instance_id = "${element(openstack_compute_instance_v2.ose-node.*.id, count.index)}"
+}
 
 resource "openstack_blockstorage_volume_v1" "master-docker-vol" {
   name = "mastervol"
@@ -120,7 +131,6 @@ resource "openstack_compute_instance_v2" "ose-master" {
   flavor_name = "${var.master_instance_size}"
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
-  floating_ip = "${openstack_compute_floatingip_v2.os3-master-floatip.address}"
   metadata {
     ssh_user = "${var.ssh_user}"
   }
@@ -138,7 +148,6 @@ resource "openstack_compute_instance_v2" "ose-node" {
   flavor_name = "${var.node_instance_size}"
   key_pair = "${var.openstack_keypair}"
   security_groups = ["default", "os3-sec-group"]
-  floating_ip = "${element(openstack_compute_floatingip_v2.os3-node-floatip.*.address, count.index)}"
   metadata {
     ssh_user = "${var.ssh_user}"
   }
