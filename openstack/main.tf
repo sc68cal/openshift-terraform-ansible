@@ -6,6 +6,7 @@ variable "master_instance_size" {}
 variable "node_image_id" {}
 variable "node_instance_size" {}
 variable "floatingip_pool_name" { default = "os1_public" }
+variable "ssh_user" { default = "cloud-user" }
 
 
 resource "openstack_compute_secgroup_v2" "os3-sec-group" {
@@ -121,7 +122,7 @@ resource "openstack_compute_instance_v2" "ose-master" {
   security_groups = ["default", "os3-sec-group"]
   floating_ip = "${openstack_compute_floatingip_v2.os3-master-floatip.address}"
   metadata {
-    ssh_user = "cloud-user"
+    ssh_user = "${var.ssh_user}"
   }
 }
 
@@ -139,7 +140,7 @@ resource "openstack_compute_instance_v2" "ose-node" {
   security_groups = ["default", "os3-sec-group"]
   floating_ip = "${element(openstack_compute_floatingip_v2.os3-node-floatip.*.address, count.index)}"
   metadata {
-    ssh_user = "cloud-user"
+    ssh_user = "${var.ssh_user}"
   }
   volume {
     volume_id = "${element(openstack_blockstorage_volume_v1.node-docker-vol.*.id, count.index)}"
