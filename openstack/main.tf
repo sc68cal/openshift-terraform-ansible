@@ -122,9 +122,11 @@ resource "openstack_compute_instance_v2" "ose-master" {
   metadata {
     ssh_user = "cloud-user"
   }
-  volume {
-    volume_id = "${openstack_blockstorage_volume_v1.master-docker-vol.id}"
-  }
+}
+
+resource "openstack_compute_volume_attach_v2" "ose-master-attach" {
+  instance_id = "${openstack_compute_instance_v2.ose-master.id}"
+  volume_id = "${openstack_blockstorage_volume_v1.master-docker-vol.id}"
 }
 
 resource "openstack_compute_instance_v2" "ose-node" {
