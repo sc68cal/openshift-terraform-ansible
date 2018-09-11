@@ -5,19 +5,8 @@ variable "master_image_id" {}
 variable "master_instance_size" {}
 variable "node_image_id" {}
 variable "node_instance_size" {}
-variable "floatingip_pool_name" { default = "os1_public" }
 variable "ssh_user" { default = "cloud-user" }
 variable "network_name" {}
-
-
-resource "openstack_networking_floatingip_v2" "os3-master-floatip" {
-  pool = "${var.floatingip_pool_name}"
-}
-
-resource "openstack_networking_floatingip_v2" "os3-node-floatip" {
-  count = "${var.num_nodes}"
-  pool = "${var.floatingip_pool_name}"
-}
 
 resource "openstack_networking_secgroup_v2" "os3-sec-group" {
   name = "os3-sec-group"
