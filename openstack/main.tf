@@ -7,91 +7,8 @@ variable "node_image_id" {}
 variable "node_instance_size" {}
 variable "floatingip_pool_name" { default = "os1_public" }
 variable "ssh_user" { default = "cloud-user" }
+variable "network_name" {}
 
-
-resource "openstack_compute_secgroup_v2" "os3-sec-group" {
-
-  name = "os3-sec-group"
-  description = "Defines well-known ports used for OS3 Master and Node deployments"
-  rule {
-    from_port = 22
-    to_port = 22
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 53
-    to_port = 53
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 80
-    to_port = 80
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 443
-    to_port = 443
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 1936
-    to_port = 1936
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 4001
-    to_port = 4001
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 7001
-    to_port = 7001
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 8443
-    to_port = 8444
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 10250
-    to_port = 10250
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 24224
-    to_port = 24224
-    ip_protocol = "tcp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 53
-    to_port = 53
-    ip_protocol = "udp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 4789
-    to_port = 4789
-    ip_protocol = "udp"
-    cidr = "0.0.0.0/0"
-  }
-  rule {
-    from_port = 24224
-    to_port = 24224
-    ip_protocol = "udp"
-    cidr = "0.0.0.0/0"
-  }
-}
 
 resource "openstack_networking_floatingip_v2" "os3-master-floatip" {
   pool = "${var.floatingip_pool_name}"
@@ -102,27 +19,131 @@ resource "openstack_networking_floatingip_v2" "os3-node-floatip" {
   pool = "${var.floatingip_pool_name}"
 }
 
-resource "openstack_compute_floatingip_associate_v2" "master_fip_associate" {
-  floating_ip = "${openstack_networking_floatingip_v2.os3-master-floatip.address}"
-  instance_id = "${openstack_compute_instance_v2.ose-master.id}"
+resource "openstack_networking_secgroup_v2" "os3-sec-group" {
+  name = "os3-sec-group"
+  description = "Defines well-known ports used for OS3 Master and Node deployments"
+}
+resource "openstack_networking_secgroup_rule_v2" "port_22" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 22
+  port_range_max = 22
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
 }
 
+resource "openstack_networking_secgroup_rule_v2" "port_53" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 53
+  port_range_max = 53
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
 
-resource "openstack_compute_floatingip_associate_v2" "node_fip_associate" {
-  count = "${var.num_nodes}"
-  floating_ip = "${element(openstack_networking_floatingip_v2.os3-node-floatip.*.address, count.index)}"
-  instance_id = "${element(openstack_compute_instance_v2.ose-node.*.id, count.index)}"
+}
+resource "openstack_networking_secgroup_rule_v2" "port_80" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 80
+  port_range_max = 80
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_443" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 443
+  port_range_max = 443
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_1936" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 1936
+  port_range_max = 1936
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_4001" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 4001
+  port_range_max = 4001
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_7001" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 7001
+  port_range_max = 7001
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_8443"{
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 8443
+  port_range_max = 8444
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_10250" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 10250
+  port_range_max = 10250
+  protocol = "tcp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+
+resource "openstack_networking_secgroup_rule_v2" "port_4789" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 4789
+  port_range_max = 4789
+  protocol = "udp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
+}
+resource "openstack_networking_secgroup_rule_v2" "port_24224" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  port_range_min = 24224
+  port_range_max = 24224
+  protocol = "udp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.os3-sec-group.id}"
+
 }
 
 resource "openstack_blockstorage_volume_v1" "master-docker-vol" {
   name = "mastervol"
-  size = 75
+  size = 25
 }
 
 resource "openstack_blockstorage_volume_v1" "node-docker-vol" {
   count = "${var.num_nodes}"
   name = "node-docker-vol${format("%02d", count.index)}"
-  size = 75
+  size = 25
 }
 
 resource "openstack_compute_instance_v2" "ose-master" {
@@ -133,6 +154,10 @@ resource "openstack_compute_instance_v2" "ose-master" {
   security_groups = ["default", "os3-sec-group"]
   metadata {
     ssh_user = "${var.ssh_user}"
+  }
+
+  network {
+    name = "${var.network_name}"
   }
 }
 
@@ -150,6 +175,9 @@ resource "openstack_compute_instance_v2" "ose-node" {
   security_groups = ["default", "os3-sec-group"]
   metadata {
     ssh_user = "${var.ssh_user}"
+  }
+  network {
+    name = "${var.network_name}"
   }
 }
 
