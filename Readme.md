@@ -13,7 +13,7 @@ There are a few pre-requisites for these scripts:
 * git
 
 
-To get started, use git to pull down this repo. You'll also want to clone down the [openshift-ansible installer](https://github.com/openshift/openshift-ansible) as that's used to do the actual deployment of openshift (which is awesome by the way!). This project also uses the [openstack dynamic inventory] (https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html#example-openstack-external-inventory-script) to create an Ansible inventory
+To get started, use git to pull down this repo. You'll also want to clone down the [openshift-ansible installer](https://github.com/openshift/openshift-ansible) as that's used to do the actual deployment of openshift (which is awesome by the way!). This project also uses the [openstack dynamic inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html#example-openstack-external-inventory-script) to create an Ansible inventory
 For this getting started section, let's assume the directory structure looks like this:
 
     ./openshift-terraform-ansible/
@@ -40,7 +40,7 @@ Create a file named `terraform.tfvars` in the `ec2` directory of this repo and a
 To access OpenStack, terraform needs to know the secret keys and access keys for your OpenStack deployment. 
 
 Ensure that you have a properly configured [clouds.yaml](https://docs.openstack.org/openstacksdk/latest/) (there is a
-repo that [has a populated clouds.yaml config ready for use](https://github.comcast.com/cloud-services/os-client-config)
+repo that [has a populated clouds.yaml config ready for use](https://github.comcast.com/cloud-services/os-client-config))
 
 Create a file named `terraform.tfvars` in the `openstack` directory of this repo and assign the keys as such:
 
