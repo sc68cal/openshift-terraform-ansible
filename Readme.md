@@ -38,24 +38,26 @@ Create a file named `terraform.tfvars` in the `ec2` directory of this repo and a
     
 ### Openstack Credentials
 To access OpenStack, terraform needs to know the secret keys and access keys for your OpenStack deployment. 
+
+Ensure that you have a properly configured [clouds.yaml](https://docs.openstack.org/openstacksdk/latest/) (there is a
+repo that [has a populated clouds.yaml config ready for use](https://github.comcast.com/cloud-services/os-client-config)
+
 Create a file named `terraform.tfvars` in the `openstack` directory of this repo and assign the keys as such:
 
-    openstack_user_name = "username"
-    openstack_tenant_name = "tenant anme"
-    openstack_tenant_id = "tentat-id"
-    openstack_password = "password"
-    openstack_auth_url = "http://youropenstack.com:5000/v2.0"
-    openstack_availability_zone = "nova"
-    openstack_region = "region"
-    openstack_keypair = "keypair"
-    num_nodes = "1"
-    
-    # update these to the image IDs you want to use in your infra
-    master_image_id = "6b7a5472-5187-4e38-bce4-9d6d2a11a8e7"
+    openstack_keypair = "scolli572"
+    num_nodes = "6"
+
+    # Comcast Cloud CentOS 7.5 x86_64 v1.0 in AS-B region
+    master_image_id = "2f39759c-19ae-486d-a2dc-56bf2a2ea7a4"
     master_instance_size = "m1.large"
     
-    node_image_id = "6b7a5472-5187-4e38-bce4-9d6d2a11a8e7"
+    # Comcast Cloud CentOS 7.5 x86_64 v1.0 in AS-B region
+    node_image_id = "2f39759c-19ae-486d-a2dc-56bf2a2ea7a4"
     node_instance_size = "m1.large"
+
+    openstack_auth_url="https://osvip-as-b01.ece.comcast.net:5000/v3/"
+
+    network_name="Public_AGILE"
 
 ### GCE Credentials
 To access GCE, terraform needs to know the secret keys and access keys for your GCE account. 
