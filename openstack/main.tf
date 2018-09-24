@@ -5,7 +5,7 @@ variable "master_image_id" {}
 variable "master_instance_size" {}
 variable "node_image_id" {}
 variable "node_instance_size" {}
-variable "ssh_user" { default = "cloud-user" }
+variable "ssh_user" { default = "centos" }
 variable "network_name" {}
 
 resource "openstack_networking_secgroup_v2" "os3-sec-group" {
