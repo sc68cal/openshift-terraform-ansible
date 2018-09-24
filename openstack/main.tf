@@ -7,6 +7,24 @@ variable "node_image_id" {}
 variable "node_instance_size" {}
 variable "ssh_user" { default = "centos" }
 variable "network_name" {}
+variable "denis_access_key" {}
+variable "denis_secret_key" {}
+variable "denis_host" {
+  default = "https://api.denis.comcast.net:9443"
+}
+
+variable "zone_id" {
+  # Owned by scolli572
+  default = "553ce6a6-e7af-4877-b609-c02b46ff7b48"
+}
+
+provider "denis" {
+  access_key = "${var.denis_access_key}"
+  secret_key = "${var.denis_secret_key}"
+  host       = "${var.denis_host}"
+}
+
+
 
 resource "openstack_networking_secgroup_v2" "os3-sec-group" {
   name = "os3-sec-group"
@@ -160,6 +178,16 @@ resource "openstack_compute_instance_v2" "ose-master" {
   }
 }
 
+resource "denis_record_set" "ose-master-record" {
+  name = "ose-master"
+  zone_id = "${var.zone_id}"
+  type = "A"
+  ttl = 300
+  record_addresses =
+["${openstack_compute_instance_v2.ose-master.access_ip_v4}"]
+
+}
+
 resource "openstack_compute_volume_attach_v2" "ose-master-attach" {
   instance_id = "${openstack_compute_instance_v2.ose-master.id}"
   volume_id = "${openstack_blockstorage_volume_v1.master-docker-vol.id}"
@@ -184,4 +212,15 @@ resource "openstack_compute_volume_attach_v2" "ose-node-attach" {
   count = "${var.num_nodes}"
   instance_id = "${element(openstack_compute_instance_v2.ose-node.*.id, count.index)}"
   volume_id = "${element(openstack_blockstorage_volume_v1.node-docker-vol.*.id, count.index)}"
+}
+
+resource "denis_record_set" "ose-node-record" {
+  count = "${var.num_nodes}"
+  name = "ose-node-${format("%02d", count.index)}"
+  zone_id = "${var.zone_id}"
+  type = "A"
+  ttl = 300
+  record_addresses =
+["${element(openstack_compute_instance_v2.ose-node.*.access_ip_v4,
+count.index)}"]
 }
