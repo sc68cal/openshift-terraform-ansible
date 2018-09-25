@@ -172,6 +172,7 @@ resource "openstack_compute_instance_v2" "ose-master" {
   security_groups = ["default", "os3-sec-group"]
   metadata {
     ansible_user = "${var.ssh_user}"
+    fqdn = "${var.denis_fqdn}"
   }
 
   network {
@@ -203,6 +204,7 @@ resource "openstack_compute_instance_v2" "ose-node" {
   security_groups = ["default", "os3-sec-group"]
   metadata {
     ansible_user = "${var.ssh_user}"
+    fqdn = "${var.denis_fqdn}"
   }
   network {
     name = "${var.network_name}"
