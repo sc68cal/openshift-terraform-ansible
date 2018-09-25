@@ -12,6 +12,7 @@ variable "denis_secret_key" {}
 variable "denis_host" {
   default = "https://api.denis.comcast.net:9443"
 }
+variable "denis_fqdn" {}
 
 variable "zone_id" {
   # Owned by scolli572
@@ -164,7 +165,7 @@ resource "openstack_blockstorage_volume_v1" "node-docker-vol" {
 }
 
 resource "openstack_compute_instance_v2" "ose-master" {
-  name = "os3-master"
+  name = "ose-master.${var.denis_fqdn}"
   image_id = "${var.master_image_id}"
   flavor_name = "${var.master_instance_size}"
   key_pair = "${var.openstack_keypair}"
@@ -195,7 +196,7 @@ resource "openstack_compute_volume_attach_v2" "ose-master-attach" {
 
 resource "openstack_compute_instance_v2" "ose-node" {
   count = "${var.num_nodes}"
-  name = "os3-node-${format("%02d", count.index)}"
+  name = "ose-node-${format("%02d", count.index)}.${var.denis_fqdn}"
   image_id = "${var.node_image_id}"
   flavor_name = "${var.node_instance_size}"
   key_pair = "${var.openstack_keypair}"
