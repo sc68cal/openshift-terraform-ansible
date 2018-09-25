@@ -8,7 +8,7 @@
     - name: Fix up /etc/hosts file
       lineinfile:
         path: /etc/hosts
-        line: "{{ ansible_hostname }}.{{ fqdn }}"
+        line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}.{{ fqdn }}"
         create: yes
     - name: Install NetworkManager
       yum:
