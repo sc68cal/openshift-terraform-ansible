@@ -2,30 +2,20 @@
 - hosts: all
   sudo: yes
   tasks:
-    - name: Remove Network Manager
-      yum: name=NetworkManager state=absent
-    - name: Install pre requisites
-      yum: name={{ item }} state=present
-      with_items:
-          - wget
-          - git
-          - unzip
-          - net-tools
-          - bind-utils
-          - iptables-services
-          - bridge-utils
-          - tmux
-    - name: Update all yum packages
-      yum: name=* state=latest
-    - name: Make filesystem from block device
-      filesystem: fstype=ext3 dev=/dev/vdb
-    - name: Make /var/lib/docker
-      file: path=/var/lib/docker state=directory mode=0755
-    - name: mount block device to /var/lib/docker
-      mount: name=/var/lib/docker src=/dev/vdb state=mounted fstype=ext3
-    - name: Install Docker
-      yum: name=docker state=present
-    - name: Enable insecure registry... since we like insecure things
-      lineinfile: dest=/etc/sysconfig/docker state=present line='OPTIONS=--insecure-registry 172.30.0.0/16' regexp="^#?OPTIONS"
-    - name: Start docker
-      service: name=docker state=started enabled=yes
+    - name: Set hostname to FQDN
+      hostname:
+        name: "{{ ansible_hostname }}.{{ fqdn }}"
+    - name: Fix up /etc/hosts file
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ ansible_hostname }}.{{ fqdn }}"
+        create: yes
+    - name: Install NetworkManager
+      yum:
+        name: NetworkManager
+        state: present
+    - name: Enable and restart NetworkManager
+      service:
+        name: NetworkManager
+        state: restarted
+        enabled: yes
