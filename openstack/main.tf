@@ -177,6 +177,8 @@ resource "openstack_compute_instance_v2" "ose-master" {
   network {
     name = "${var.network_name}"
   }
+
+  depends_on = [ "openstack_networking_secgroup_v2.os3-sec-group"]
 }
 
 resource "denis_record_set" "ose-master-record" {
@@ -208,6 +210,8 @@ resource "openstack_compute_instance_v2" "ose-node" {
   network {
     name = "${var.network_name}"
   }
+  depends_on = [ "openstack_networking_secgroup_v2.os3-sec-group"]
+
 }
 
 resource "openstack_compute_volume_attach_v2" "ose-node-attach" {
