@@ -1,4 +1,3 @@
-variable "openstack_auth_url" {}
 variable "openstack_keypair" {}
 variable "num_nodes" { default = "2"}
 variable "master_image_id" {}
